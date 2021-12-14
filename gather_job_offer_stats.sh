@@ -10,12 +10,12 @@ cyn=$'\e[1;36m'
 end=$'\e[0m'
 
 # Script parameters
-job_type=$1 # frontend | backend | devops | fullstack | big-data | ai | testing
+job_type=${1:-frontend} # frontend | backend | devops | fullstack | big-data | ai | testing
+current_step=${2:-1}
+last_step=${3:-50}
 
 # Stats config
 step_size=1
-current_step=1
-last_step=10 # in thousands
 
 # Filename config
 report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
@@ -37,6 +37,8 @@ all_expert_rates=()
 # Welcome block
 clear
 printf "\n${cyn}NO\nFLUFF\nJOBS${end}\n\n"
+printf "Job type: ${blu}${job_type}${end}\n"
+printf "Salary range: ${yel}$(( current_step * 1000 )) PLN${end} - ${yel}$(( last_step * 1000 )) PLN${end}\n\n"
 printf "Report will be stored in ${red}${report_filename}${end}\n\n"
 
 # Helper functions
@@ -130,7 +132,7 @@ print_job_type_summary() {
 offer_counts='"salary","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
 echo "${offer_counts},$(get_job_type_stats_header 'trainee'),$(get_job_type_stats_header 'junior'),$(get_job_type_stats_header 'mid'),$(get_job_type_stats_header 'senior'),$(get_job_type_stats_header 'expert')" > $report_filename
 
-for i in $(seq $last_step); do
+for i in $(seq $current_step $last_step); do
   salary=$(( $current_step*1000 ))
 
   trainee_offers=$(( $(get_number_of_offers $salary "trainee") - $included_trainee_offers ))
