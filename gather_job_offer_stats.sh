@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Logging colors
 red=$'\e[1;31m'
 grn=$'\e[1;32m'
 yel=$'\e[1;33m'
@@ -9,53 +10,52 @@ cyn=$'\e[1;36m'
 end=$'\e[0m'
 
 # Script parameters
-JOB_TYPE=$1 # frontend | backend | devops | fullstack | big-data | ai | testing
+job_type=$1 # frontend | backend | devops | fullstack | big-data | ai | testing
 
 # Stats config
-STEP=1
-CURRENT=1
-FINISH=50 # in thousands
-FILENAME_DATE=$(date +%m-%d-%Y_%H-%M-%S)
-FILENAME="${JOB_TYPE}_salary_report_${FILENAME_DATE}.csv"
+step_size=1
+current_step=1
+last_step=50 # in thousands
+
+# Filename config
+report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
+report_filename="${job_type}_salary_report_${report_filename_date}.csv"
 
 # Temp data
-includedTraineeOffers=0
-includedJuniorOffers=0
-includedMidOffers=0
-includedSeniorOffers=0
-includedExpertOffers=0
+included_trainee_offers=0
+included_junior_offers=0
+included_mid_offers=0
+included_senior_offers=0
+included_expert_offers=0
 
-allTraineeRates=()
-allJuniorRates=()
-allMidRates=()
-allSeniorRates=()
-allExpertRates=()
+all_trainee_rates=()
+all_junior_rates=()
+all_mid_rates=()
+all_senior_rates=()
+all_expert_rates=()
 
 # Welcome block
 clear
 printf "\n${cyn}NO\nFLUFF\nJOBS${end}\n\n"
-printf "Report will be stored in ${red}${FILENAME}${end}\n\n"
+printf "Report will be stored in ${red}${report_filename}${end}\n\n"
 
-getJobTypeStatsHeader () {
+# Helper functions
+get_job_type_stats_header() {
   echo "\"${1} average\",\"${1} median\",\"${1} min\",\"${1} max\""
 }
 
-getJobTypeStatsMarkers () {
+get_job_type_stats_markers() {
   echo "@${1}_average@,@${1}_median@,@${1}_min@,@${1}_max@"
 }
 
-# Report file setup
-offer_counts='"salary","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
-echo "${offer_counts},$(getJobTypeStatsHeader 'trainee'),$(getJobTypeStatsHeader 'junior'),$(getJobTypeStatsHeader 'mid'),$(getJobTypeStatsHeader 'senior'),$(getJobTypeStatsHeader 'expert')" > $FILENAME
-
-getNumberOfOffers () {
-  url="https://nofluffjobs.com/pl/praca-it/praca-zdalna/${JOB_TYPE}?page=1&criteria=seniority%3D${2}%20salary%3Cpln${1}m"
+get_number_of_offers() {
+  url="https://nofluffjobs.com/pl/praca-it/praca-zdalna/${job_type}?page=1&criteria=seniority%3D${2}%20salary%3Cpln${1}m"
   content=$(curl -L -s $url)
   total_count=$(echo "${content}" | tr '\n' ' ' | sed -e 's/.*totalCount&q;:\(.*\)}}.*/\1/')
   echo "${total_count}"
 }
 
-prNum () {
+print_num() {
   if [[ $1 -gt 0 ]]; then
     echo -n "${grn}${1}${end}"
   else
@@ -63,9 +63,9 @@ prNum () {
   fi
 }
 
-getMedian () {
-  arrName=$1[@]
-  array=("${!arrName}")
+get_median() {
+  array_name=$1[@]
+  array=("${!array_name}")
 
   IFS=$'\n'
   median=$(awk '{arr[NR]=$1} END {if (NR%2==1) print arr[(NR+1)/2]; else print (arr[NR/2]+arr[NR/2+1])/2}' <<< sort <<< "${array[*]}")
@@ -74,10 +74,10 @@ getMedian () {
   echo $median
 }
 
-getAverage() {
-  arrName=$1[@]
-  array=("${!arrName}")
-  arrayLength="${#array[@]}"
+get_average() {
+  array_name=$1[@]
+  array=("${!array_name}")
+  array_length="${#array[@]}"
   total=0
 
   for var in "${array[@]}"
@@ -85,19 +85,19 @@ getAverage() {
     total=$((total + var))
   done
 
-  average=$(( total / $arrayLength ))
+  average=$(( total / $array_length ))
   echo $average
 }
 
-printSummmary () {
-  arrName=$1[@]
-  arr=("${!arrName}")
-  arrLength="${#arr[@]}"
+print_job_type_summary() {
+  array_name=$1[@]
+  arr=("${!array_name}")
+  array_length="${#arr[@]}"
   seniority=$2
 
-  if [[ $arrLength -gt 0 ]]; then
-    average=$(getAverage arr)
-    median=$(getMedian arr)
+  if [[ $array_length -gt 0 ]]; then
+    average=$(get_average arr)
+    median=$(get_median arr)
     min=$(echo ${arr[0]})
     max=$(echo ${arr[${#arr[@]} - 1]})
 
@@ -114,68 +114,73 @@ printSummmary () {
   fi
 
   # Store overall stats in the report
-  sed -i '.bak' "s/@${seniority}_average@/${average}/" $FILENAME
-  sed -i '.bak' "s/@${seniority}_median@/${median}/" $FILENAME
-  sed -i '.bak' "s/@${seniority}_min@/${min}/" $FILENAME
-  sed -i '.bak' "s/@${seniority}_max@/${max}/" $FILENAME
+  sed -i '.bak' "s/@${seniority}_average@/${average}/" $report_filename
+  sed -i '.bak' "s/@${seniority}_median@/${median}/" $report_filename
+  sed -i '.bak' "s/@${seniority}_min@/${min}/" $report_filename
+  sed -i '.bak' "s/@${seniority}_max@/${max}/" $report_filename
 }
 
-for i in $(seq $FINISH); do
-  salary=$(( $CURRENT*1000 ))
+# Report file setup
+offer_counts='"salary","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
+echo "${offer_counts},$(get_job_type_stats_header 'trainee'),$(get_job_type_stats_header 'junior'),$(get_job_type_stats_header 'mid'),$(get_job_type_stats_header 'senior'),$(get_job_type_stats_header 'expert')" > $report_filename
 
-  traineeOffers=$(( $(getNumberOfOffers $salary "trainee") - $includedTraineeOffers ))
-  juniorOffers=$(( $(getNumberOfOffers $salary "junior") - $includedJuniorOffers ))
-  midOffers=$(( $(getNumberOfOffers $salary "mid") - $includedMidOffers ))
-  seniorOffers=$(( $(getNumberOfOffers $salary "senior") - $includedSeniorOffers ))
-  expertOffers=$(( $(getNumberOfOffers $salary "expert") - $includedExpertOffers ))
-  total=$(( $traineeOffers + $juniorOffers + $midOffers + $seniorOffers + $expertOffers ))
+for i in $(seq $last_step); do
+  salary=$(( $current_step*1000 ))
 
-  printf "%s%s%s%s%s%s%s%s%s%s%s%s%s\n" "Total offers with salary ${yel}${salary} PLN${end}: " "$(prNum $total)" " (trainee: " "$(prNum $traineeOffers)" ", junior: " "$(prNum $juniorOffers)" ", mid: " "$(prNum $midOffers)" ", senior: " "$(prNum $seniorOffers)" ", expert: " "$(prNum $expertOffers)" ")"
+  trainee_offers=$(( $(get_number_of_offers $salary "trainee") - $included_trainee_offers ))
+  junior_offers=$(( $(get_number_of_offers $salary "junior") - $included_junior_offers ))
+  mid_offers=$(( $(get_number_of_offers $salary "mid") - $included_mid_offers ))
+  senior_offers=$(( $(get_number_of_offers $salary "senior") - $included_senior_offers ))
+  expert_offers=$(( $(get_number_of_offers $salary "expert") - $included_expert_offers ))
+  total=$(( $trainee_offers + $junior_offers + $mid_offers + $senior_offers + $expert_offers ))
 
-  line="${salary},${total},${traineeOffers},${juniorOffers},${midOffers},${seniorOffers},${expertOffers}"
-  if [[ $CURRENT -eq 1 ]]; then
-    line+=",$(getJobTypeStatsMarkers 'trainee'),$(getJobTypeStatsMarkers 'junior'),$(getJobTypeStatsMarkers 'mid'),$(getJobTypeStatsMarkers 'senior'),$(getJobTypeStatsMarkers 'expert')"
+  printf "%s%s%s%s%s%s%s%s%s%s%s%s%s\n" "Total offers with salary ${yel}${salary} PLN${end}: " "$(print_num $total)" " (trainee: " "$(print_num $trainee_offers)" ", junior: " "$(print_num $junior_offers)" ", mid: " "$(print_num $mid_offers)" ", senior: " "$(print_num $senior_offers)" ", expert: " "$(print_num $expert_offers)" ")"
+
+  line="${salary},${total},${trainee_offers},${junior_offers},${mid_offers},${senior_offers},${expert_offers}"
+  if [[ $current_step -eq 1 ]]; then
+    line+=",$(get_job_type_stats_markers 'trainee'),$(get_job_type_stats_markers 'junior'),$(get_job_type_stats_markers 'mid'),$(get_job_type_stats_markers 'senior'),$(get_job_type_stats_markers 'expert')"
   else
     line+=",,,,,,,,,,,,,,,,,,,,,"
   fi
 
-  echo $line >> $FILENAME
+  echo $line >> $report_filename
 
-  includedTraineeOffers=$(( includedTraineeOffers + traineeOffers ))
-  includedJuniorOffers=$(( includedJuniorOffers + juniorOffers ))
-  includedMidOffers=$(( includedMidOffers + midOffers ))
-  includedSeniorOffers=$(( includedSeniorOffers + seniorOffers ))
-  includedExpertOffers=$(( includedExpertOffers + expertOffers ))
+  included_trainee_offers=$(( included_trainee_offers + trainee_offers ))
+  included_junior_offers=$(( included_junior_offers + junior_offers ))
+  included_mid_offers=$(( included_mid_offers + mid_offers ))
+  included_senior_offers=$(( included_senior_offers + senior_offers ))
+  included_expert_offers=$(( included_expert_offers + expert_offers ))
 
-  if [[ $traineeOffers -gt 0 ]]; then
-    for i in $(seq $traineeOffers); do allTraineeRates+=($salary); done
+  # Append new offers to arrays
+  if [[ $trainee_offers -gt 0 ]]; then
+    for i in $(seq $trainee_offers); do all_trainee_rates+=($salary); done
   fi
 
-  if [[ $juniorOffers -gt 0 ]]; then
-    for i in $(seq $juniorOffers); do allJuniorRates+=($salary); done
+  if [[ $junior_offers -gt 0 ]]; then
+    for i in $(seq $junior_offers); do all_junior_rates+=($salary); done
   fi
 
-  if [[ $midOffers -gt 0 ]]; then
-    for i in $(seq $midOffers); do allMidRates+=($salary); done
+  if [[ $mid_offers -gt 0 ]]; then
+    for i in $(seq $mid_offers); do all_mid_rates+=($salary); done
   fi
 
-  if [[ $seniorOffers -gt 0 ]]; then
-    for i in $(seq $seniorOffers); do allSeniorRates+=($salary); done
+  if [[ $senior_offers -gt 0 ]]; then
+    for i in $(seq $senior_offers); do all_senior_rates+=($salary); done
   fi
 
-  if [[ $expertOffers -gt 0 ]]; then
-    for i in $(seq $expertOffers); do allExpertRates+=($salary); done
+  if [[ $expert_offers -gt 0 ]]; then
+    for i in $(seq $expert_offers); do all_expert_rates+=($salary); done
   fi
 
   # Display & store analysys summary
-  if [[ $CURRENT -eq $FINISH ]]; then
+  if [[ $current_step -eq $last_step ]]; then
     printf "\n"
-    printSummmary allTraineeRates "trainee"
-    printSummmary allJuniorRates "junior"
-    printSummmary allMidRates "mid"
-    printSummmary allSeniorRates "senior"
-    printSummmary allExpertRates "expert"
+    print_job_type_summary all_trainee_rates "trainee"
+    print_job_type_summary all_junior_rates "junior"
+    print_job_type_summary all_mid_rates "mid"
+    print_job_type_summary all_senior_rates "senior"
+    print_job_type_summary all_expert_rates "expert"
   fi
 
-  CURRENT=$(( $CURRENT+$STEP ))
+  current_step=$(( $current_step+$step_size ))
 done
