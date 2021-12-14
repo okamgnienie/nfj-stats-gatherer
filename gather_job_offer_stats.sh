@@ -10,8 +10,9 @@ cyn=$'\e[1;36m'
 end=$'\e[0m'
 
 # Script parameters
-job_type=${1:-frontend} # frontend | backend | devops | fullstack | big-data | ai | testing
-current_step=${2:-1}
+remote=${1:-true} # true | false
+job_type=${2:-frontend} # frontend | backend | devops | fullstack | big-data | ai | testing
+current_step=${3:-1}
 last_step=${3:-50}
 
 # Stats config
@@ -51,7 +52,13 @@ get_job_type_stats_markers() {
 }
 
 get_number_of_offers() {
-  url="https://nofluffjobs.com/pl/praca-it/praca-zdalna/${job_type}?page=1&criteria=seniority%3D${2}%20salary%3Cpln${1}m"
+  if $remote; then
+    remote_chunk="/praca-zdalna"
+  else
+    remote_chunk=""
+  fi
+
+  url="https://nofluffjobs.com/pl/praca-it${remote_chunk}/${job_type}?page=1&criteria=seniority%3D${2}%20salary%3Cpln${1}m"
   content=$(curl -L -s $url)
   total_count=$(echo "${content}" | tr '\n' ' ' | sed -e 's/.*totalCount&q;:\(.*\)}}.*/\1/')
   echo "${total_count}"
