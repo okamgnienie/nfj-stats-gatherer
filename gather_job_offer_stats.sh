@@ -72,7 +72,8 @@ get_number_of_offers() {
   url="https://nofluffjobs.com/pl/praca-it${remote_chunk}/${job_type}?page=1&criteria=seniority%3D${2}%20salary%3Cpln${1}m"
   content=$(curl -L -s $url)
   total_count=$(echo "${content}" | tr '\n' ' ' | sed -e 's/.*totalCount&q;:\(.*\)}}.*/\1/')
-  echo "${total_count}"
+
+  [ "$total_count" -eq "$total_count" ] 2>/dev/null && echo $total_count || echo 0
 }
 
 print_num() {
