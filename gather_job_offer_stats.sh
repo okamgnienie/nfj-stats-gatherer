@@ -10,10 +10,20 @@ cyn=$'\e[1;36m'
 end=$'\e[0m'
 
 # Script parameters
-remote=${1:-true} # true | false
-job_type=${2:-frontend} # frontend | backend | devops | fullstack | big-data | ai | testing
-current_step=${3:-1}
-last_step=${3:-50}
+remote=false # true | false
+job_type="frontend" # frontend | backend | devops | fullstack | big-data | ai | testing
+current_step=1 # number 1 = 1000 PLN
+last_step=50 # number 1 = 1000 PLN
+
+while getopts rj:f:t: flag
+do
+  case "${flag}" in
+    r) remote=true;;
+    j) job_type=${OPTARG};;
+    f) current_step=${OPTARG};;
+    t) last_step=${OPTARG};;
+  esac
+done
 
 # Stats config
 step_size=1
@@ -39,7 +49,8 @@ all_expert_rates=()
 clear
 printf "\n${cyn}NO\nFLUFF\nJOBS${end}\n\n"
 printf "Job type: ${blu}${job_type}${end}\n"
-printf "Salary range: ${yel}$(( current_step * 1000 )) PLN${end} - ${yel}$(( last_step * 1000 )) PLN${end}\n\n"
+printf "Salary range: ${yel}$(( current_step * 1000 )) PLN${end} - ${yel}$(( last_step * 1000 )) PLN${end}\n"
+printf "Remote only: ${grn}${remote}${end}\n\n"
 printf "Report will be stored in ${red}${report_filename}${end}\n\n"
 
 # Helper functions
