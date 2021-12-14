@@ -15,7 +15,7 @@ job_type=$1 # frontend | backend | devops | fullstack | big-data | ai | testing
 # Stats config
 step_size=1
 current_step=1
-last_step=50 # in thousands
+last_step=10 # in thousands
 
 # Filename config
 report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
@@ -66,12 +66,18 @@ print_num() {
 get_median() {
   array_name=$1[@]
   array=("${!array_name}")
+  arr=($(printf '%d\n' "${array[@]}" | sort -n))
+  array_length=${#arr[@]}
 
-  IFS=$'\n'
-  median=$(awk '{arr[NR]=$1} END {if (NR%2==1) print arr[(NR+1)/2]; else print (arr[NR/2]+arr[NR/2+1])/2}' <<< sort <<< "${array[*]}")
-  unset IFS
+  if (( $array_length % 2 == 1 )); then
+    val="${arr[ $(($array_length/2)) ]}"
+  else
+    (( j=array_length/2 ))
+    (( k=j-1 ))
+    (( val=(${arr[j]} + ${arr[k]})/2 ))
+  fi
 
-  echo $median
+  echo $val
 }
 
 get_average() {
