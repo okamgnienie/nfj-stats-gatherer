@@ -143,7 +143,7 @@ print_job_type_summary() {
 }
 
 # Prepare directory
-mkdir -p reports
+mkdir -p "${report_dir}"
 
 # Report file setup
 offer_counts='"salary from","salary to","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
