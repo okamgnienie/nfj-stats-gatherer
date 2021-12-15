@@ -30,8 +30,9 @@ step_size=1
 current_step=$first_step
 
 # Filename config
+report_dir='reports'
 report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
-report_filename="${job_type}_salary_report_${report_filename_date}.csv"
+report_filename="${report_dir}/${job_type}_salary_report_${report_filename_date}.csv"
 
 # Temp data
 all_trainee_rates=()
@@ -140,6 +141,9 @@ print_job_type_summary() {
   sed -i '.bak' "s/@${seniority}_min@/${min}/" $report_filename
   sed -i '.bak' "s/@${seniority}_max@/${max}/" $report_filename
 }
+
+# Prepare directory
+mkdir -p reports
 
 # Report file setup
 offer_counts='"salary from","salary to","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
