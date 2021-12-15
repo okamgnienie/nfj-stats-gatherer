@@ -50,11 +50,11 @@ printf "Report will be stored in ${red}${report_filename}${end}\n\n"
 
 # Helper functions
 get_job_type_stats_header() {
-  echo "\"${1} average\",\"${1} lower quartile\",\"${1} median\",\"${1} upper quartile\",\"${1} min\",\"${1} max\""
+  echo ",\"${1} average\",\"${1} lower quartile\",\"${1} median\",\"${1} upper quartile\",\"${1} min\",\"${1} max\""
 }
 
 get_job_type_stats_markers() {
-  echo "@${1}_average@,@${1}_lower_quartile@,@${1}_median@,@${1}_upper_quartile@,@${1}_min@,@${1}_max@"
+  echo ",@${1}_average@,@${1}_lower_quartile@,@${1}_median@,@${1}_upper_quartile@,@${1}_min@,@${1}_max@"
 }
 
 get_number_of_offers() {
@@ -142,7 +142,7 @@ print_job_type_summary() {
 }
 
 # Report file setup
-offer_counts='"salary","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
+offer_counts='"salary from","salary to","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers"'
 echo "${offer_counts},$(get_job_type_stats_header 'trainee'),$(get_job_type_stats_header 'junior'),$(get_job_type_stats_header 'mid'),$(get_job_type_stats_header 'senior'),$(get_job_type_stats_header 'expert')" > $report_filename
 
 for i in $(seq $current_step $(( last_step - 1 ))); do
@@ -158,11 +158,11 @@ for i in $(seq $current_step $(( last_step - 1 ))); do
 
   printf "%s%s%s%s%s%s%s%s%s%s%s%s%s\n" "Total offers with salary in range ${yel}${salary_from} PLN${end} - ${yel}${salary_to} PLN${end}: " "$(print_num $total)" " (trainee: " "$(print_num $trainee_offers)" ", junior: " "$(print_num $junior_offers)" ", mid: " "$(print_num $mid_offers)" ", senior: " "$(print_num $senior_offers)" ", expert: " "$(print_num $expert_offers)" ")"
 
-  line="${salary_from},${total},${trainee_offers},${junior_offers},${mid_offers},${senior_offers},${expert_offers}"
+  line="${salary_from},${salary_to},${total},${trainee_offers},${junior_offers},${mid_offers},${senior_offers},${expert_offers}"
   if [[ $current_step -eq $first_step ]]; then
     line+=",$(get_job_type_stats_markers 'trainee'),$(get_job_type_stats_markers 'junior'),$(get_job_type_stats_markers 'mid'),$(get_job_type_stats_markers 'senior'),$(get_job_type_stats_markers 'expert')"
   else
-    line+=",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+    line+=",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
   fi
 
   echo $line >> $report_filename
@@ -200,3 +200,5 @@ for i in $(seq $current_step $(( last_step - 1 ))); do
 
   current_step=$(( $current_step + $step_size ))
 done
+
+rm "${report_filename}.bak"
