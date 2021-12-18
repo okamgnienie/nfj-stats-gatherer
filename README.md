@@ -11,7 +11,7 @@ Use flags to customize:
 - `-t` up to salary (in thousands)
 - `-r` remote only
 
-Examples:
+## Examples:
 
 Search remote frontend jobs with default salary range (0 - 50K PLN / month):
 ```sh
