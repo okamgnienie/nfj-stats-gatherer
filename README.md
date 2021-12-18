@@ -2,7 +2,7 @@
 
 Run the command to gather and save job offer stats like so:
 ```shell
-./gather_job_offer_stats.sh
+./gather_job_offer_stats.sh [-jftr] [-j job_type] [-f from_salary] [-t to_salary] [-r remote] 
 ```
 
 Use flags to customize:
