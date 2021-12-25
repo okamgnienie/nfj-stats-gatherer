@@ -22,3 +22,8 @@ Search backend jobs with salary range 10 - 30K PLN / month:
 ```sh
 ./gather_job_offer_stats.sh -j backend -f 10 -t 30
 ```
+
+## Assumptions
+
+Given there is a job offer found in range between 0 and 1000 PLN, script round it up to the upper value,
+1000 PLN in this case, then all the calculations are performed on taking into account this value.
