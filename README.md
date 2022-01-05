@@ -2,7 +2,7 @@
 
 Run the command to gather and save job offer stats in a CSV report:
 ```sh
-./gather_job_offer_stats.sh [-jeftr] [-j job_type] [-e employment_type] [-f from_salary] [-t to_salary] [-r remote]
+./gather_job_offer_stats.sh [-jeftrk] [-j job_type] [-e employment_type] [-f from_salary] [-t to_salary] [-r remote] [-k keep]
 ```
 
 Use flags to customize:
@@ -11,6 +11,7 @@ Use flags to customize:
 - `-f` start from salary (in thousands)
 - `-t` up to salary (in thousands)
 - `-r` remote only
+- `-k` keep the report in the repository (otherwise will be git ignored)
 
 ## Examples:
 

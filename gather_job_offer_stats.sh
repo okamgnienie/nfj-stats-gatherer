@@ -11,15 +11,17 @@ end=$'\e[0m'
 
 # Script parameters
 remote=false # true | false
+keep=false # true (make report commitable) | false (git ignored report)
 job_type="frontend" # frontend | backend | devops | fullstack | big-data | ai | testing
 employment_type="b2b" # permanent (employment contract) | zlecenie (mandate contract) | b2b | uod (specific-task contract) | intern (unpaid intership)
 first_step=0 # number 1 = 1000 PLN
 last_step=50 # number 1 = 1000 PLN
 
-while getopts rj:e:f:t: flag
+while getopts rkj:e:f:t: flag
 do
   case "${flag}" in
     r) remote=true;;
+    k) keep=true;;
     j) job_type=${OPTARG};;
     e) employment_type=${OPTARG};;
     f) first_step=${OPTARG};;
@@ -33,10 +35,14 @@ current_step=$first_step
 
 # Filename config
 report_dir='reports'
+[[ "${keep}" == "false" ]] && report_dir+="/temp"
+report_dir+="/${job_type}"
+
 report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
 report_filename="${report_dir}/${job_type}_${employment_type}"
 if $remote; then report_filename+="_remote"; fi
 report_filename+="_salary_report_${report_filename_date}.csv"
+
 
 # Temp data
 all_trainee_rates=()
