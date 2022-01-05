@@ -12,14 +12,16 @@ end=$'\e[0m'
 # Script parameters
 remote=false # true | false
 job_type="frontend" # frontend | backend | devops | fullstack | big-data | ai | testing
+employment_type="b2b" # permanent (employment contract) | zlecenie (mandate contract) | b2b | uod (specific-task contract) | intern (unpaid intership)
 first_step=0 # number 1 = 1000 PLN
 last_step=50 # number 1 = 1000 PLN
 
-while getopts rj:f:t: flag
+while getopts rj:e:f:t: flag
 do
   case "${flag}" in
     r) remote=true;;
     j) job_type=${OPTARG};;
+    e) employment_type=${OPTARG};;
     f) first_step=${OPTARG};;
     t) last_step=${OPTARG};;
   esac
@@ -32,7 +34,9 @@ current_step=$first_step
 # Filename config
 report_dir='reports'
 report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
-report_filename="${report_dir}/${job_type}_salary_report_${report_filename_date}.csv"
+report_filename="${report_dir}/${job_type}_${employment_type}"
+if $remote; then report_filename+="_remote"; fi
+report_filename+="_salary_report_${report_filename_date}.csv"
 
 # Temp data
 all_trainee_rates=()
@@ -46,6 +50,7 @@ all_rates=()
 clear
 printf "\n${cyn}NO\nFLUFF\nJOBS${end}\n\n"
 printf "Job type: ${blu}${job_type}${end}\n"
+printf "Employment type: ${mag}${employment_type}${end}\n"
 printf "Salary range: ${yel}$(( current_step * 1000 )) PLN${end} - ${yel}$(( last_step * 1000 )) PLN${end}\n"
 printf "Remote only: ${grn}${remote}${end}\n\n"
 printf "Report will be stored in ${red}${report_filename}${end}\n\n"
@@ -66,7 +71,7 @@ get_number_of_offers() {
     remote_chunk=""
   fi
 
-  url="https://nofluffjobs.com/pl/praca-it${remote_chunk}/${job_type}?page=1&criteria=seniority%3D${3}%20salary%3Epln${1}m%20salary%3Cpln${2}m"
+  url="https://nofluffjobs.com/pl/praca-it${remote_chunk}/${job_type}?page=1&criteria=employment%3D${employment_type}%20seniority%3D${3}%20salary%3Epln${1}m%20salary%3Cpln${2}m"
   content=$(curl -L -s $url)
   total_count=$(echo "${content}" | tr '\n' ' ' | sed -e 's/.*totalCount&q;:\(.*\)}}.*/\1/')
 

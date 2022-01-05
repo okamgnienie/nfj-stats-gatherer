@@ -2,11 +2,12 @@
 
 Run the command to gather and save job offer stats in a CSV report:
 ```sh
-./gather_job_offer_stats.sh [-jftr] [-j job_type] [-f from_salary] [-t to_salary] [-r remote]
+./gather_job_offer_stats.sh [-jeftr] [-j job_type] [-e employment_type] [-f from_salary] [-t to_salary] [-r remote]
 ```
 
 Use flags to customize:
 - `-j` job type `frontend | backend | devops | fullstack | big-data | ai | testing`
+- `-e` job type `permanent (employment contract) | zlecenie (mandate contract) | b2b | uod (specific-task contract) | intern (unpaid intership)`
 - `-f` start from salary (in thousands)
 - `-t` up to salary (in thousands)
 - `-r` remote only
