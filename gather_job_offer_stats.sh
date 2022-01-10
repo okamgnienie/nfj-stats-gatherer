@@ -34,14 +34,16 @@ step_size=1
 current_step=$first_step
 
 # Filename config
-report_dir='reports'
+report_date=$(date +%Y-%m-%d)
+report_time=$(date +%H-%M-%S)
+
+report_dir="reports/${report_date}"
 [[ "${keep}" == "false" ]] && report_dir+="/temp"
 report_dir+="/${job_type}"
 
-report_filename_date=$(date +%m-%d-%Y_%H-%M-%S) # to easily distinguish the reports
 report_filename="${report_dir}/${job_type}_${employment_type}"
 if $remote; then report_filename+="_remote"; fi
-report_filename+="_salary_report_${report_filename_date}.csv"
+report_filename+="_salary_report_${report_date}_${report_time}.csv"
 
 
 # Temp data

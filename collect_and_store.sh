@@ -8,8 +8,8 @@ todays_date=$(date +%m-%d-%Y)
 for job_type in $job_types; do
   ./gather_job_offer_stats.sh -k -j $job_type -e b2b
   ./gather_job_offer_stats.sh -k -j $job_type -e permanent
-  ./gather_job_offer_stats.sh -k -r -j $job_type -e b2b
-  ./gather_job_offer_stats.sh -k -r -j $job_type -e permanent
+  ./gather_job_offer_stats.sh -k -j $job_type -e b2b -r
+  ./gather_job_offer_stats.sh -k -j $job_type -e permanent -r
 done
 
 # Store generated reports in the repository
