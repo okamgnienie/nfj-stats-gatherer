@@ -1,0 +1,8 @@
+"salary from","salary to","total offers","trainee offers","junior offers","mid offers","senior offers","expert offers",,"trainee average","trainee lower quartile","trainee median","trainee upper quartile","trainee min","trainee max",,"junior average","junior lower quartile","junior median","junior upper quartile","junior min","junior max",,"mid average","mid lower quartile","mid median","mid upper quartile","mid min","mid max",,"senior average","senior lower quartile","senior median","senior upper quartile","senior min","senior max",,"expert average","expert lower quartile","expert median","expert upper quartile","expert min","expert max",,"all average","all lower quartile","all median","all upper quartile","all min","all max"
+0,1000,0,0,0,0,0,0,,@trainee_average@,@trainee_lower_quartile@,@trainee_median@,@trainee_upper_quartile@,@trainee_min@,@trainee_max@,,@junior_average@,@junior_lower_quartile@,@junior_median@,@junior_upper_quartile@,@junior_min@,@junior_max@,,@mid_average@,@mid_lower_quartile@,@mid_median@,@mid_upper_quartile@,@mid_min@,@mid_max@,,@senior_average@,@senior_lower_quartile@,@senior_median@,@senior_upper_quartile@,@senior_min@,@senior_max@,,@expert_average@,@expert_lower_quartile@,@expert_median@,@expert_upper_quartile@,@expert_min@,@expert_max@,,@all_average@,@all_lower_quartile@,@all_median@,@all_upper_quartile@,@all_min@,@all_max@
+1000,2000,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2000,3000,1,0,1,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+3000,4000,3,0,3,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+4000,5000,4,0,4,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5000,6000,8,0,8,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6000,7000,13,0,13,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
